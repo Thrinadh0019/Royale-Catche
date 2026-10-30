@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Royale Catch offers fresh, hygienically cleaned freshwater prawns ready to cook, with convenient weekend delivery.">
+<meta name="keywords" content="fresh prawns, freshwater prawns, prawns delivery, cleaned prawns, ready to cook prawns, seafood delivery, fresh seafood, Royale Catch, prawn price, weekend seafood delivery">
+<meta name="theme-color" content="#087f78">
+<title>Royale Catch — Admin</title>
+<style>
+  :root {
+    --bg: #ded9d0;
+    --bg-card: #ffffff;
+    --accent: #d94a1e;
+    --accent-dark: #b83a15;
+    --text: #2a2620;
+    --muted: #6f695f;
+    --border: #d6d0c5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    background: #ffffff;
+    position: sticky;
+    top: 0;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand .logo-badge {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #2b6cb0, #1a365d);
+    display: flex; align-items: center; justify-content: center; font-size: 22px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  .brand-text h1 { margin: 0; font-size: 18px; letter-spacing: 1px; color: var(--text); }
+  .brand-text span {
+    display: block; font-size: 11px; color: var(--accent);
+    letter-spacing: 2px; text-transform: uppercase;
+  }
+  .header-right { display: flex; align-items: center; gap: 18px; }
+  .header-right .hello { font-size: 14px; color: var(--muted); }
+  .header-right .hello b { color: var(--text); }
+  form.signout-form button {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer;
+  }
+  form.signout-form button:hover { border-color: var(--accent); color: var(--accent); }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+  .wrap h2 { margin: 0 0 24px; font-size: 22px; color: var(--text); }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  @media (max-width: 700px) { .stats { grid-template-columns: 1fr; } }
+  .stat-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px;
+  }
+  .stat-card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+  .stat-card .value { font-size: 28px; font-weight: 700; color: var(--accent); margin-top: 6px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; background: #faf9f6; }
+  tr:last-child td { border-bottom: none; }
+  td.total { color: var(--accent); font-weight: 700; }
+  td.address { max-width: 220px; color: var(--muted); }
+
+  select.status-select {
+    background: #faf9f6; color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 8px; font-size: 12px; cursor: pointer;
+  }
+  select.status-select:focus { outline: none; border-color: var(--accent); }
+
+  .empty { color: var(--muted); padding: 30px; text-align: center; }
+
+  /* ---------- Product management ---------- */
+  .section-block { margin-bottom: 40px; }
+  .section-block h2 { margin: 0 0 18px; font-size: 22px; color: var(--text); }
+
+  .add-product-form {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr auto;
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 900px) { .add-product-form { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 500px) { .add-product-form { grid-template-columns: 1fr; } }
+  .add-product-form label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .add-product-form input[type="text"],
+  .add-product-form input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    background: #faf9f6;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .add-product-form input:focus { outline: none; border-color: var(--accent); }
+  .add-product-form input[type="file"] {
+    width: 100%;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 8px 0;
+  }
+  .add-product-form button {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .add-product-form button:hover { background: var(--accent-dark); }
+
+  .product-photo-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #f2ede4;
+    display: block;
+  }
+  .product-photo-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background: #f2ede4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .product-row-actions { display: flex; gap: 8px; }
+  .product-row-actions button {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .product-row-actions button:hover { border-color: var(--accent); color: var(--accent); }
+  .product-row-actions button.danger:hover { border-color: #b91c1c; color: #b91c1c; }
+
+  /* ---------- Edit product modal ---------- */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+  }
+  .modal-box h3 { margin: 0 0 16px; color: var(--text); font-size: 18px; }
+  .modal-box label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 12px 0 6px;
+  }
+  .modal-box input[type="text"], .modal-box input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    background: #faf9f6;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+  }
+  .modal-box input:focus { outline: none; border-color: var(--accent); }
+  .modal-box input[type="file"] { font-size: 12px; color: var(--muted); }
+  .modal-box .current-photo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .modal-box .current-photo img {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  .modal-box .current-photo span { font-size: 12px; color: var(--muted); }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .modal-actions button {
+    flex: 1;
+    padding: 11px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+  }
+  .modal-cancel {
+    background: transparent;
+    border: 1px solid var(--border) !important;
+    color: var(--muted);
+  }
+  .modal-cancel:hover { border-color: var(--muted) !important; color: var(--text); }
+  .modal-save {
+    background: var(--accent);
+    color: #fff;
+  }
+  .modal-save:hover { background: var(--accent-dark); }
+
+  .avail-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .avail-pill.yes { background: #eaf6ec; color: #15803d; }
+  .avail-pill.no { background: #f2ede4; color: #8a8272; }
+  /* Premium admin refresh */
+  :root{--bg:#f3f7f7;--bg-card:#fff;--accent:#ef5b2a;--accent-dark:#d9481b;--text:#102a2e;--muted:#64777a;--border:#dce8e8;--teal:#087f78}
+  body{background:linear-gradient(180deg,#f8fbfb,#eef5f4)}header{z-index:20;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);box-shadow:0 1px 0 rgba(16,42,46,.06);padding:14px max(24px,calc((100vw - 1180px)/2))}.brand .logo-badge{background:linear-gradient(145deg,#0f766e,#0891b2);box-shadow:0 8px 24px rgba(8,127,120,.22)}.brand-text h1{font-weight:900}.brand-text span{color:var(--teal);font-weight:800}form.signout-form button{border-radius:999px;font-weight:700;background:#fff}
+  .wrap{max-width:1180px;padding-top:42px}.section-block{margin-bottom:48px}.section-block h2{font-size:28px;letter-spacing:-.5px}.add-product-form{border-radius:20px;padding:22px;box-shadow:0 14px 40px rgba(16,42,46,.07);border-color:rgba(8,127,120,.12)}.add-product-form input[type=text],.add-product-form input[type=number]{border-radius:11px;padding:12px}.add-product-form input:focus{border-color:var(--teal);box-shadow:0 0 0 4px rgba(8,127,120,.08)}.add-product-form button{border-radius:11px;background:linear-gradient(135deg,#ef5b2a,#f97316);box-shadow:0 9px 20px rgba(239,91,42,.18)}
+  table{border-radius:18px;box-shadow:0 12px 36px rgba(16,42,46,.06);border-color:rgba(8,127,120,.1)}th{background:#f4f9f8;color:#4c6568}th,td{padding:14px}.product-photo-thumb,.product-photo-placeholder{width:56px;height:56px;border-radius:12px}.product-row-actions button{border-radius:9px;padding:7px 11px;font-weight:700}.product-row-actions button:hover{border-color:var(--teal);color:var(--teal)}
+  .stats{gap:18px}.stat-card{border-radius:18px;padding:22px;border-color:rgba(8,127,120,.1);box-shadow:0 12px 34px rgba(16,42,46,.06)}.stat-card .value{font-size:32px;color:var(--teal)}select.status-select{border-radius:9px;padding:7px 9px}.modal-overlay{backdrop-filter:blur(6px)}.modal-box{border-radius:22px;box-shadow:0 24px 80px rgba(15,23,42,.25)}.modal-save{background:var(--teal)}.modal-save:hover{background:#075e59}
+  @media(max-width:760px){header{padding:12px 16px}.hello{display:none}.wrap{padding:28px 14px 60px}.section-block{overflow-x:auto}.section-block>table{min-width:760px}}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo-badge">🦐</div>
+    <div class="brand-text">
+      <h1>ROYALE CATCH</h1>
+      <span>Admin Panel</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="hello">Admin: <b>{{ admin_username }}</b></span>
+    <form class="signout-form" method="post" action="{% url 'signout' %}">
+      {% csrf_token %}
+      <button type="submit">Sign out</button>
+    </form>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="section-block">
+    <h2>Manage Products</h2>
+
+    <form class="add-product-form" method="post" action="{% url 'admin_add_product' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div>
+        <label for="name">Product name</label>
+        <input type="text" id="name" name="name" placeholder="e.g. Extra Large" required>
+      </div>
+      <div>
+        <label for="unit">Unit</label>
+        <input type="text" id="unit" name="unit" placeholder="500g pack" value="500g pack">
+      </div>
+      <div>
+        <label for="price">Price (₹)</label>
+        <input type="number" id="price" name="price" placeholder="650" min="1" required>
+      </div>
+      <div>
+        <label for="image">Photo</label>
+        <input type="file" id="image" name="image" accept="image/*">
+      </div>
+      <button type="submit">Add Product</button>
+    </form>
+
+    {% if products %}
+    <table>
+      <thead>
+        <tr><th>Photo</th><th>Name</th><th>Unit</th><th>Price</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr data-product-id="{{ product.id }}">
+          <td>
+            {% if product.image_url %}
+            <img class="product-photo-thumb" src="{{ product.image_url }}" alt="{{ product.name }}">
+            {% else %}
+            <div class="product-photo-placeholder">🦐</div>
+            {% endif %}
+          </td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.unit }}</td>
+          <td class="total">₹{{ product.price }}</td>
+          <td>
+            <span class="avail-pill {% if product.available %}yes{% else %}no{% endif %} avail-label">
+              {% if product.available %}Visible{% else %}Hidden{% endif %}
+            </span>
+          </td>
+          <td class="product-row-actions">
+            <button type="button" class="edit-btn" data-modal-target="edit-modal-{{ product.id }}">Edit</button>
+            <button type="button" class="toggle-btn">{% if product.available %}Hide{% else %}Show{% endif %}</button>
+            <button type="button" class="danger delete-btn">Delete</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">No products yet — add your first one above.</div>
+    {% endif %}
+  </div>
+
+  <!-- Edit-product modals: one per product, pre-filled server-side -->
+  {% for product in products %}
+  <div class="modal-overlay" id="edit-modal-{{ product.id }}">
+    <div class="modal-box">
+      <h3>Edit "{{ product.name }}"</h3>
+      <form method="post" action="{% url 'admin_edit_product' product.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="name-{{ product.id }}">Product name</label>
+        <input type="text" id="name-{{ product.id }}" name="name" value="{{ product.name }}" required>
+
+        <label for="unit-{{ product.id }}">Unit</label>
+        <input type="text" id="unit-{{ product.id }}" name="unit" value="{{ product.unit }}">
+
+        <label for="price-{{ product.id }}">Price (₹)</label>
+        <input type="number" id="price-{{ product.id }}" name="price" value="{{ product.price }}" min="1" required>
+
+        <label for="image-{{ product.id }}">Replace photo (optional)</label>
+        <input type="file" id="image-{{ product.id }}" name="image" accept="image/*">
+        {% if product.image_url %}
+        <div class="current-photo">
+          <img src="{{ product.image_url }}" alt="{{ product.name }}">
+          <span>Current photo — leave blank to keep it</span>
+        </div>
+        {% endif %}
+
+        <div class="modal-actions">
+          <button type="button" class="modal-cancel" data-modal-close="edit-modal-{{ product.id }}">Cancel</button>
+          <button type="submit" class="modal-save">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="section-block">
+    <h2>All Orders</h2>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="label">Total Orders</div>
+      <div class="value">{{ total_orders }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Total Revenue</div>
+      <div class="value">₹{{ total_revenue }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Pending Orders</div>
+      <div class="value">{{ pending_orders }}</div>
+    </div>
+  </div>
+
+  {% if orders %}
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Items</th>
+        <th>Address</th>
+        <th>Total</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.created_at|date:"d M Y, H:i" }}</td>
+        <td>{{ order.username }}</td>
+        <td>
+          {% for item in order.items %}
+            {{ item.label }} × {{ item.quantity }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </td>
+        <td class="address">{{ order.address }}</td>
+        <td class="total">₹{{ order.total }}</td>
+        <td>
+          <select class="status-select" data-order-id="{{ order.id }}">
+            <option value="pending" {% if order.status == "pending" %}selected{% endif %}>Pending</option>
+            <option value="confirmed" {% if order.status == "confirmed" %}selected{% endif %}>Confirmed</option>
+            <option value="delivered" {% if order.status == "delivered" %}selected{% endif %}>Delivered</option>
+          </select>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">No orders placed yet.</div>
+  {% endif %}
+  </div>
+</div>
+
+<script>
+  function getCookie(name) {
+    const match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return match ? match.pop() : '';
+  }
+
+  document.querySelectorAll('.status-select').forEach(select => {
+    select.addEventListener('change', async () => {
+      const orderId = select.dataset.orderId;
+      const status = select.value;
+      try {
+        const res = await fetch(`/admin-dashboard/orders/${orderId}/status/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+          body: `status=${encodeURIComponent(status)}`,
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          alert(data.error || 'Could not update status.');
+        }
+      } catch (err) {
+        alert('Network error updating status.');
+      }
+    });
+  });
+
+  // --- Product management: toggle visibility / delete ---
+  // --- Edit-product modal open/close ---
+  document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = document.getElementById(btn.dataset.modalTarget);
+      if (modal) modal.classList.add('open');
+    });
+  });
+  document.querySelectorAll('[data-modal-close]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = document.getElementById(btn.dataset.modalClose);
+      if (modal) modal.classList.remove('open');
+    });
+  });
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('open'); // click outside the box
+    });
+  });
+
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const row = btn.closest('tr');
+      const productId = row.dataset.productId;
+      try {
+        const res = await fetch(`/admin-dashboard/products/${productId}/toggle/`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        });
+        const data = await res.json();
+        if (data.ok) {
+          const pill = row.querySelector('.avail-label');
+          if (data.available) {
+            pill.textContent = 'Visible';
+            pill.className = 'avail-pill yes avail-label';
+            btn.textContent = 'Hide';
+          } else {
+            pill.textContent = 'Hidden';
+            pill.className = 'avail-pill no avail-label';
+            btn.textContent = 'Show';
+          }
+        } else {
+          alert(data.error || 'Could not update product.');
+        }
+      } catch (err) {
+        alert('Network error updating product.');
+      }
+    });
+  });
+
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const row = btn.closest('tr');
+      const productId = row.dataset.productId;
+      if (!confirm('Delete this product? This cannot be undone.')) return;
+      try {
+        const res = await fetch(`/admin-dashboard/products/${productId}/delete/`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        });
+        const data = await res.json();
+        if (data.ok) {
+          row.remove();
+        } else {
+          alert(data.error || 'Could not delete product.');
+        }
+      } catch (err) {
+        alert('Network error deleting product.');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
